@@ -19,7 +19,7 @@ export function Topbar() {
         </div>
       </div>
 
-      <div className="flex-1 md:hidden" />
+      <div className="flex-1" />
 
       <button
         onClick={toggleTheme}

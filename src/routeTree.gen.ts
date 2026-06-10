@@ -25,6 +25,20 @@ import { Route as DoctorIndexRouteImport } from './routes/doctor.index'
 import { Route as BillingIndexRouteImport } from './routes/billing.index'
 import { Route as AnalyticsIndexRouteImport } from './routes/analytics.index'
 import { Route as AiSuiteIndexRouteImport } from './routes/ai-suite.index'
+import { Route as SuperAdminStaffRouteImport } from './routes/super-admin.staff'
+import { Route as SuperAdminHospitalsRouteImport } from './routes/super-admin.hospitals'
+import { Route as SuperAdminSubsectionRouteImport } from './routes/super-admin.$subsection'
+import { Route as ReceptionBookRouteImport } from './routes/reception.book'
+import { Route as ReceptionSubsectionRouteImport } from './routes/reception.$subsection'
+import { Route as PharmacySubsectionRouteImport } from './routes/pharmacy.$subsection'
+import { Route as PatientSubsectionRouteImport } from './routes/patient.$subsection'
+import { Route as NurseSubsectionRouteImport } from './routes/nurse.$subsection'
+import { Route as LabSubsectionRouteImport } from './routes/lab.$subsection'
+import { Route as HospitalAdminStaffRouteImport } from './routes/hospital-admin.staff'
+import { Route as HospitalAdminSubsectionRouteImport } from './routes/hospital-admin.$subsection'
+import { Route as EmergencySubsectionRouteImport } from './routes/emergency.$subsection'
+import { Route as DoctorSubsectionRouteImport } from './routes/doctor.$subsection'
+import { Route as BillingSubsectionRouteImport } from './routes/billing.$subsection'
 
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
@@ -106,10 +120,94 @@ const AiSuiteIndexRoute = AiSuiteIndexRouteImport.update({
   path: '/ai-suite/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const SuperAdminStaffRoute = SuperAdminStaffRouteImport.update({
+  id: '/super-admin/staff',
+  path: '/super-admin/staff',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SuperAdminHospitalsRoute = SuperAdminHospitalsRouteImport.update({
+  id: '/super-admin/hospitals',
+  path: '/super-admin/hospitals',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SuperAdminSubsectionRoute = SuperAdminSubsectionRouteImport.update({
+  id: '/super-admin/$subsection',
+  path: '/super-admin/$subsection',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ReceptionBookRoute = ReceptionBookRouteImport.update({
+  id: '/reception/book',
+  path: '/reception/book',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ReceptionSubsectionRoute = ReceptionSubsectionRouteImport.update({
+  id: '/reception/$subsection',
+  path: '/reception/$subsection',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PharmacySubsectionRoute = PharmacySubsectionRouteImport.update({
+  id: '/pharmacy/$subsection',
+  path: '/pharmacy/$subsection',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PatientSubsectionRoute = PatientSubsectionRouteImport.update({
+  id: '/patient/$subsection',
+  path: '/patient/$subsection',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const NurseSubsectionRoute = NurseSubsectionRouteImport.update({
+  id: '/nurse/$subsection',
+  path: '/nurse/$subsection',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LabSubsectionRoute = LabSubsectionRouteImport.update({
+  id: '/lab/$subsection',
+  path: '/lab/$subsection',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const HospitalAdminStaffRoute = HospitalAdminStaffRouteImport.update({
+  id: '/hospital-admin/staff',
+  path: '/hospital-admin/staff',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const HospitalAdminSubsectionRoute = HospitalAdminSubsectionRouteImport.update({
+  id: '/hospital-admin/$subsection',
+  path: '/hospital-admin/$subsection',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const EmergencySubsectionRoute = EmergencySubsectionRouteImport.update({
+  id: '/emergency/$subsection',
+  path: '/emergency/$subsection',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DoctorSubsectionRoute = DoctorSubsectionRouteImport.update({
+  id: '/doctor/$subsection',
+  path: '/doctor/$subsection',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BillingSubsectionRoute = BillingSubsectionRouteImport.update({
+  id: '/billing/$subsection',
+  path: '/billing/$subsection',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/login': typeof LoginRoute
+  '/billing/$subsection': typeof BillingSubsectionRoute
+  '/doctor/$subsection': typeof DoctorSubsectionRoute
+  '/emergency/$subsection': typeof EmergencySubsectionRoute
+  '/hospital-admin/$subsection': typeof HospitalAdminSubsectionRoute
+  '/hospital-admin/staff': typeof HospitalAdminStaffRoute
+  '/lab/$subsection': typeof LabSubsectionRoute
+  '/nurse/$subsection': typeof NurseSubsectionRoute
+  '/patient/$subsection': typeof PatientSubsectionRoute
+  '/pharmacy/$subsection': typeof PharmacySubsectionRoute
+  '/reception/$subsection': typeof ReceptionSubsectionRoute
+  '/reception/book': typeof ReceptionBookRoute
+  '/super-admin/$subsection': typeof SuperAdminSubsectionRoute
+  '/super-admin/hospitals': typeof SuperAdminHospitalsRoute
+  '/super-admin/staff': typeof SuperAdminStaffRoute
   '/ai-suite/': typeof AiSuiteIndexRoute
   '/analytics/': typeof AnalyticsIndexRoute
   '/billing/': typeof BillingIndexRoute
@@ -128,6 +226,20 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/login': typeof LoginRoute
+  '/billing/$subsection': typeof BillingSubsectionRoute
+  '/doctor/$subsection': typeof DoctorSubsectionRoute
+  '/emergency/$subsection': typeof EmergencySubsectionRoute
+  '/hospital-admin/$subsection': typeof HospitalAdminSubsectionRoute
+  '/hospital-admin/staff': typeof HospitalAdminStaffRoute
+  '/lab/$subsection': typeof LabSubsectionRoute
+  '/nurse/$subsection': typeof NurseSubsectionRoute
+  '/patient/$subsection': typeof PatientSubsectionRoute
+  '/pharmacy/$subsection': typeof PharmacySubsectionRoute
+  '/reception/$subsection': typeof ReceptionSubsectionRoute
+  '/reception/book': typeof ReceptionBookRoute
+  '/super-admin/$subsection': typeof SuperAdminSubsectionRoute
+  '/super-admin/hospitals': typeof SuperAdminHospitalsRoute
+  '/super-admin/staff': typeof SuperAdminStaffRoute
   '/ai-suite': typeof AiSuiteIndexRoute
   '/analytics': typeof AnalyticsIndexRoute
   '/billing': typeof BillingIndexRoute
@@ -147,6 +259,20 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/login': typeof LoginRoute
+  '/billing/$subsection': typeof BillingSubsectionRoute
+  '/doctor/$subsection': typeof DoctorSubsectionRoute
+  '/emergency/$subsection': typeof EmergencySubsectionRoute
+  '/hospital-admin/$subsection': typeof HospitalAdminSubsectionRoute
+  '/hospital-admin/staff': typeof HospitalAdminStaffRoute
+  '/lab/$subsection': typeof LabSubsectionRoute
+  '/nurse/$subsection': typeof NurseSubsectionRoute
+  '/patient/$subsection': typeof PatientSubsectionRoute
+  '/pharmacy/$subsection': typeof PharmacySubsectionRoute
+  '/reception/$subsection': typeof ReceptionSubsectionRoute
+  '/reception/book': typeof ReceptionBookRoute
+  '/super-admin/$subsection': typeof SuperAdminSubsectionRoute
+  '/super-admin/hospitals': typeof SuperAdminHospitalsRoute
+  '/super-admin/staff': typeof SuperAdminStaffRoute
   '/ai-suite/': typeof AiSuiteIndexRoute
   '/analytics/': typeof AnalyticsIndexRoute
   '/billing/': typeof BillingIndexRoute
@@ -167,6 +293,20 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/login'
+    | '/billing/$subsection'
+    | '/doctor/$subsection'
+    | '/emergency/$subsection'
+    | '/hospital-admin/$subsection'
+    | '/hospital-admin/staff'
+    | '/lab/$subsection'
+    | '/nurse/$subsection'
+    | '/patient/$subsection'
+    | '/pharmacy/$subsection'
+    | '/reception/$subsection'
+    | '/reception/book'
+    | '/super-admin/$subsection'
+    | '/super-admin/hospitals'
+    | '/super-admin/staff'
     | '/ai-suite/'
     | '/analytics/'
     | '/billing/'
@@ -185,6 +325,20 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/login'
+    | '/billing/$subsection'
+    | '/doctor/$subsection'
+    | '/emergency/$subsection'
+    | '/hospital-admin/$subsection'
+    | '/hospital-admin/staff'
+    | '/lab/$subsection'
+    | '/nurse/$subsection'
+    | '/patient/$subsection'
+    | '/pharmacy/$subsection'
+    | '/reception/$subsection'
+    | '/reception/book'
+    | '/super-admin/$subsection'
+    | '/super-admin/hospitals'
+    | '/super-admin/staff'
     | '/ai-suite'
     | '/analytics'
     | '/billing'
@@ -203,6 +357,20 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/login'
+    | '/billing/$subsection'
+    | '/doctor/$subsection'
+    | '/emergency/$subsection'
+    | '/hospital-admin/$subsection'
+    | '/hospital-admin/staff'
+    | '/lab/$subsection'
+    | '/nurse/$subsection'
+    | '/patient/$subsection'
+    | '/pharmacy/$subsection'
+    | '/reception/$subsection'
+    | '/reception/book'
+    | '/super-admin/$subsection'
+    | '/super-admin/hospitals'
+    | '/super-admin/staff'
     | '/ai-suite/'
     | '/analytics/'
     | '/billing/'
@@ -222,6 +390,20 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   LoginRoute: typeof LoginRoute
+  BillingSubsectionRoute: typeof BillingSubsectionRoute
+  DoctorSubsectionRoute: typeof DoctorSubsectionRoute
+  EmergencySubsectionRoute: typeof EmergencySubsectionRoute
+  HospitalAdminSubsectionRoute: typeof HospitalAdminSubsectionRoute
+  HospitalAdminStaffRoute: typeof HospitalAdminStaffRoute
+  LabSubsectionRoute: typeof LabSubsectionRoute
+  NurseSubsectionRoute: typeof NurseSubsectionRoute
+  PatientSubsectionRoute: typeof PatientSubsectionRoute
+  PharmacySubsectionRoute: typeof PharmacySubsectionRoute
+  ReceptionSubsectionRoute: typeof ReceptionSubsectionRoute
+  ReceptionBookRoute: typeof ReceptionBookRoute
+  SuperAdminSubsectionRoute: typeof SuperAdminSubsectionRoute
+  SuperAdminHospitalsRoute: typeof SuperAdminHospitalsRoute
+  SuperAdminStaffRoute: typeof SuperAdminStaffRoute
   AiSuiteIndexRoute: typeof AiSuiteIndexRoute
   AnalyticsIndexRoute: typeof AnalyticsIndexRoute
   BillingIndexRoute: typeof BillingIndexRoute
@@ -352,12 +534,124 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AiSuiteIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/super-admin/staff': {
+      id: '/super-admin/staff'
+      path: '/super-admin/staff'
+      fullPath: '/super-admin/staff'
+      preLoaderRoute: typeof SuperAdminStaffRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/super-admin/hospitals': {
+      id: '/super-admin/hospitals'
+      path: '/super-admin/hospitals'
+      fullPath: '/super-admin/hospitals'
+      preLoaderRoute: typeof SuperAdminHospitalsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/super-admin/$subsection': {
+      id: '/super-admin/$subsection'
+      path: '/super-admin/$subsection'
+      fullPath: '/super-admin/$subsection'
+      preLoaderRoute: typeof SuperAdminSubsectionRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/reception/book': {
+      id: '/reception/book'
+      path: '/reception/book'
+      fullPath: '/reception/book'
+      preLoaderRoute: typeof ReceptionBookRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/reception/$subsection': {
+      id: '/reception/$subsection'
+      path: '/reception/$subsection'
+      fullPath: '/reception/$subsection'
+      preLoaderRoute: typeof ReceptionSubsectionRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/pharmacy/$subsection': {
+      id: '/pharmacy/$subsection'
+      path: '/pharmacy/$subsection'
+      fullPath: '/pharmacy/$subsection'
+      preLoaderRoute: typeof PharmacySubsectionRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/patient/$subsection': {
+      id: '/patient/$subsection'
+      path: '/patient/$subsection'
+      fullPath: '/patient/$subsection'
+      preLoaderRoute: typeof PatientSubsectionRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/nurse/$subsection': {
+      id: '/nurse/$subsection'
+      path: '/nurse/$subsection'
+      fullPath: '/nurse/$subsection'
+      preLoaderRoute: typeof NurseSubsectionRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/lab/$subsection': {
+      id: '/lab/$subsection'
+      path: '/lab/$subsection'
+      fullPath: '/lab/$subsection'
+      preLoaderRoute: typeof LabSubsectionRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/hospital-admin/staff': {
+      id: '/hospital-admin/staff'
+      path: '/hospital-admin/staff'
+      fullPath: '/hospital-admin/staff'
+      preLoaderRoute: typeof HospitalAdminStaffRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/hospital-admin/$subsection': {
+      id: '/hospital-admin/$subsection'
+      path: '/hospital-admin/$subsection'
+      fullPath: '/hospital-admin/$subsection'
+      preLoaderRoute: typeof HospitalAdminSubsectionRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/emergency/$subsection': {
+      id: '/emergency/$subsection'
+      path: '/emergency/$subsection'
+      fullPath: '/emergency/$subsection'
+      preLoaderRoute: typeof EmergencySubsectionRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/doctor/$subsection': {
+      id: '/doctor/$subsection'
+      path: '/doctor/$subsection'
+      fullPath: '/doctor/$subsection'
+      preLoaderRoute: typeof DoctorSubsectionRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/billing/$subsection': {
+      id: '/billing/$subsection'
+      path: '/billing/$subsection'
+      fullPath: '/billing/$subsection'
+      preLoaderRoute: typeof BillingSubsectionRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   LoginRoute: LoginRoute,
+  BillingSubsectionRoute: BillingSubsectionRoute,
+  DoctorSubsectionRoute: DoctorSubsectionRoute,
+  EmergencySubsectionRoute: EmergencySubsectionRoute,
+  HospitalAdminSubsectionRoute: HospitalAdminSubsectionRoute,
+  HospitalAdminStaffRoute: HospitalAdminStaffRoute,
+  LabSubsectionRoute: LabSubsectionRoute,
+  NurseSubsectionRoute: NurseSubsectionRoute,
+  PatientSubsectionRoute: PatientSubsectionRoute,
+  PharmacySubsectionRoute: PharmacySubsectionRoute,
+  ReceptionSubsectionRoute: ReceptionSubsectionRoute,
+  ReceptionBookRoute: ReceptionBookRoute,
+  SuperAdminSubsectionRoute: SuperAdminSubsectionRoute,
+  SuperAdminHospitalsRoute: SuperAdminHospitalsRoute,
+  SuperAdminStaffRoute: SuperAdminStaffRoute,
   AiSuiteIndexRoute: AiSuiteIndexRoute,
   AnalyticsIndexRoute: AnalyticsIndexRoute,
   BillingIndexRoute: BillingIndexRoute,
@@ -376,3 +670,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}

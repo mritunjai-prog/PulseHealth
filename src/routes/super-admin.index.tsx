@@ -9,19 +9,31 @@ import {
   appointmentsPerHospital, staffDistribution,
 } from "@/data/demo";
 
+import { useQuery } from "@tanstack/react-query";
+
 export const Route = createFileRoute("/super-admin/")({
   head: () => ({ meta: [{ title: "Super Admin — MedCore" }] }),
-  component: () => (
-    <AppShell>
-      <PageHeader title="Platform Overview" subtitle="All hospitals, staff, and patient activity across the MedCore network." />
+  component: () => {
+    const { data: kpis } = useQuery({
+      queryKey: ["platformKpis"],
+      queryFn: async () => {
+        const res = await fetch("http://localhost:3000/analytics/kpis");
+        return res.json();
+      },
+      initialData: platformKpis,
+    });
 
-      <div className="grid grid-cols-2 lg:grid-cols-5 gap-4 mb-6">
-        <KpiCard label="Hospitals" value={platformKpis.hospitals} icon={Building2} tone="primary" delay={0} />
-        <KpiCard label="Patients" value={platformKpis.patients} icon={Users} tone="secondary" delay={0.05} />
-        <KpiCard label="Staff" value={platformKpis.staff} icon={Activity} tone="success" delay={0.1} />
-        <KpiCard label="Appointments Today" value={platformKpis.appointmentsToday} icon={Calendar} tone="warning" delay={0.15} />
-        <KpiCard label="Revenue Today" value={platformKpis.revenueToday} prefix="₹" icon={Wallet} tone="accent" delay={0.2} />
-      </div>
+    return (
+      <AppShell>
+        <PageHeader title="Platform Overview" subtitle="All hospitals, staff, and patient activity across the MedCore network." />
+
+        <div className="grid grid-cols-2 lg:grid-cols-5 gap-4 mb-6">
+          <KpiCard label="Hospitals" value={kpis.hospitals} icon={Building2} tone="primary" delay={0} />
+          <KpiCard label="Patients" value={kpis.patients} icon={Users} tone="secondary" delay={0.05} />
+          <KpiCard label="Staff" value={kpis.staff} icon={Activity} tone="success" delay={0.1} />
+          <KpiCard label="Appointments Today" value={kpis.appointmentsToday} icon={Calendar} tone="warning" delay={0.15} />
+          <KpiCard label="Revenue Today" value={kpis.revenueToday} prefix="₹" icon={Wallet} tone="accent" delay={0.2} />
+        </div>
 
       <div className="grid lg:grid-cols-3 gap-4 mb-6">
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.25 }} className="card-soft p-5 lg:col-span-2">
@@ -103,5 +115,6 @@ export const Route = createFileRoute("/super-admin/")({
         ))}
       </div>
     </AppShell>
-  ),
+    );
+  },
 });

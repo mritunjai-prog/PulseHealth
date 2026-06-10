@@ -1,0 +1,286 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  SUPER_ADMIN
+  HOSPITAL_ADMIN
+  DOCTOR
+  NURSE
+  RECEPTIONIST
+  LAB_TECH
+  PHARMACIST
+  BILLING_EXEC
+  INSURANCE_COORD
+  PATIENT
+  DEPT_HEAD
+  ED_MANAGER
+}
+
+enum UserStatus {
+  ACTIVE
+  INACTIVE
+  LOCKED
+}
+
+enum DepartmentType {
+  CLINICAL
+  ADMIN
+  SUPPORT
+}
+
+model Hospital {
+  id        String   @id @default(uuid())
+  name      String
+  code      String   @unique
+  address   String?
+  city      String?
+  state     String?
+  country   String?
+  timeZone  String?
+  config    Json?
+  
+  users          User[]
+  departments    Department[]
+  patients       Patient[]
+  appointments   Appointments[]
+  medicalRecords MedicalRecord[]
+  inventory      PharmacyInventory[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([city])
+}
+
+model Department {
+  id         String   @id @default(uuid())
+  hospitalId String
+  hospital   Hospital @relation(fields: [hospitalId], references: [id])
+  name       String
+  type       DepartmentType
+  headUserId String?
+  headUser   User?    @relation("DepartmentHead", fields: [headUserId], references: [id])
+
+  users        User[]         @relation("UserDepartment")
+  appointments Appointments[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([hospitalId])
+}
+
+model User {
+  id           String   @id @default(uuid())
+  username     String   @unique
+  passwordHash String
+  role         Role
+  
+  hospitalId   String?
+  hospital     Hospital? @relation(fields: [hospitalId], references: [id])
+
+  departmentId String?
+  department   Department? @relation("UserDepartment", fields: [departmentId], references: [id])
+
+  email        String?
+  phone        String?
+  status       UserStatus @default(ACTIVE)
+  lastLoginAt  DateTime?
+
+  // Relations
+  headedDepartments Department[] @relation("DepartmentHead")
+  createdPatients   Patient[]      @relation("UserPatientCreated")
+  appointments      Appointments[] @relation("DoctorAppointments")
+  authoredRecords   MedicalRecord[] @relation("AuthorMedicalRecords")
+  labOrders         LabOrder[]     @relation("DoctorLabOrders")
+  labResults        LabResult[]    @relation("TechnicianLabResults")
+  prescriptions     Prescription[] @relation("DoctorPrescriptions")
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([hospitalId, role])
+  @@index([phone])
+}
+
+model Patient {
+  id           String   @id @default(uuid())
+  hospitalId   String
+  hospital     Hospital @relation(fields: [hospitalId], references: [id])
+  
+  MRN          String
+  firstName    String
+  lastName     String
+  dob          DateTime
+  gender       String
+  phone        String?
+  email        String?
+  address      Json?
+  identifiers  Json?
+  consentFlags Json?
+
+  createdByUserId String?
+  createdByUser   User?   @relation("UserPatientCreated", fields: [createdByUserId], references: [id])
+
+  appointments   Appointments[]
+  medicalRecords MedicalRecord[]
+  labOrders      LabOrder[]
+  prescriptions  Prescription[]
+  invoices       Invoice[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([hospitalId, MRN])
+  @@index([phone])
+}
+
+model Appointments {
+  id            String   @id @default(uuid())
+  hospitalId    String
+  hospital      Hospital @relation(fields: [hospitalId], references: [id])
+  
+  patientId     String
+  patient       Patient  @relation(fields: [patientId], references: [id])
+
+  doctorId      String
+  doctor        User     @relation("DoctorAppointments", fields: [doctorId], references: [id])
+
+  departmentId  String
+  department    Department @relation(fields: [departmentId], references: [id])
+
+  startTime     DateTime
+  endTime       DateTime
+  status        String   // SCHEDULED, COMPLETED, CANCELLED, NO_SHOW
+  visitType     String   // OPD, TELECONSULT, FOLLOW_UP
+  source        String   // ONLINE, FRONTDESK, CALL_CENTER, AI_AGENT
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([doctorId, startTime])
+  @@index([patientId])
+}
+
+model MedicalRecord {
+  id             String   @id @default(uuid())
+  hospitalId     String
+  hospital       Hospital @relation(fields: [hospitalId], references: [id])
+
+  patientId      String
+  patient        Patient  @relation(fields: [patientId], references: [id])
+
+  consultationId String?  
+  
+  type           String   // NOTE, VITALS, PROBLEM_LIST, ALLERGY_LIST, DISCHARGE_SUMMARY, OTHER
+  data           Json
+  
+  authorId       String
+  author         User     @relation("AuthorMedicalRecords", fields: [authorId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([patientId, type])
+}
+
+model LabOrder {
+  id            String   @id @default(uuid())
+  patientId     String
+  patient       Patient  @relation(fields: [patientId], references: [id])
+  doctorId      String
+  doctor        User     @relation("DoctorLabOrders", fields: [doctorId], references: [id])
+  
+  testName      String
+  status        String   // PENDING, PROCESSING, COMPLETED, CANCELLED
+  priority      String   // ROUTINE, URGENT, STAT
+  notes         String?
+  
+  results       LabResult[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model LabResult {
+  id          String   @id @default(uuid())
+  orderId     String
+  order       LabOrder @relation(fields: [orderId], references: [id])
+  
+  technicianId String?
+  technician   User?    @relation("TechnicianLabResults", fields: [technicianId], references: [id])
+
+  data        Json
+  flags       Json?    // Abnormal flags
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model PharmacyInventory {
+  id           String   @id @default(uuid())
+  hospitalId   String
+  hospital     Hospital @relation(fields: [hospitalId], references: [id])
+  
+  drugName     String
+  ndcCode      String?  @unique
+  stockLevel   Int
+  reorderLevel Int
+  price        Float
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Prescription {
+  id           String   @id @default(uuid())
+  patientId    String
+  patient      Patient  @relation(fields: [patientId], references: [id])
+  doctorId     String
+  doctor       User     @relation("DoctorPrescriptions", fields: [doctorId], references: [id])
+  
+  medication   String
+  dosage       String
+  frequency    String
+  duration     String
+  status       String   // ACTIVE, COMPLETED, CANCELLED
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Invoice {
+  id           String   @id @default(uuid())
+  patientId    String
+  patient      Patient  @relation(fields: [patientId], references: [id])
+  
+  amount       Float
+  status       String   // PENDING, PAID, PARTIAL, CANCELLED
+  dueDate      DateTime
+  items        Json
+
+  claims       InsuranceClaim[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model InsuranceClaim {
+  id           String   @id @default(uuid())
+  invoiceId    String
+  invoice      Invoice  @relation(fields: [invoiceId], references: [id])
+  
+  provider     String
+  policyNumber String
+  status       String   // SUBMITTED, APPROVED, DENIED, PARTIAL
+  amountPaid   Float    @default(0)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}

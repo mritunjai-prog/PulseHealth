@@ -1,30 +1,63 @@
 import { createFileRoute, useRouter } from "@tanstack/react-router";
+import { useState } from "react";
 import { motion } from "framer-motion";
-import { Activity, Heart, Stethoscope, Pill, FlaskConical } from "lucide-react";
-import { useAuth, roleHome, roleLabel, type Role } from "@/store/auth";
+import { Activity, Heart, Stethoscope, Pill, FlaskConical, Loader2, Sun, Moon } from "lucide-react";
+import { useAuth, roleHome } from "@/store/auth";
+import { toast } from "sonner";
 
 export const Route = createFileRoute("/login")({
   head: () => ({ meta: [{ title: "Sign in — MedCore" }] }),
   component: LoginPage,
 });
 
-const roleOptions: Role[] = [
-  "SUPER_ADMIN", "HOSPITAL_ADMIN", "DOCTOR", "NURSE", "RECEPTIONIST",
-  "LAB_TECHNICIAN", "PHARMACIST", "BILLING_EXECUTIVE", "INSURANCE_COORDINATOR",
-  "ED_MANAGER", "PATIENT",
-];
-
 function LoginPage() {
   const router = useRouter();
   const login = useAuth((s) => s.login);
+  const { theme, toggleTheme } = useAuth();
+  const [username, setUsername] = useState("admin");
+  const [password, setPassword] = useState("password123");
+  const [loading, setLoading] = useState(false);
+  const demoLogin = useAuth((s) => s.demoLogin);
 
-  const signIn = (role: Role) => {
-    login(role);
+  const handleDemoLogin = (role: any) => {
+    demoLogin(role);
+    toast.success(`Logged in as ${role} (Demo)`);
     router.navigate({ to: roleHome[role] });
   };
 
+  const handleLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    try {
+      await login(username, password);
+      const user = useAuth.getState().user;
+      if (user && user.role) {
+        toast.success("Successfully logged in");
+        router.navigate({ to: roleHome[user.role] });
+      }
+    } catch (err) {
+      toast.error("Invalid credentials or server offline");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
-    <div className="min-h-screen flex flex-col md:flex-row bg-background">
+    <div className="min-h-screen flex flex-col md:flex-row bg-background relative">
+      <button
+        onClick={toggleTheme}
+        className="absolute top-6 right-6 w-14 h-8 rounded-full bg-surface-offset border border-divider p-1 transition-colors z-20"
+        aria-label="Toggle theme"
+      >
+        <motion.div
+          className="absolute top-1 w-6 h-6 rounded-full bg-primary text-primary-foreground grid place-items-center shadow-md"
+          animate={{ x: theme === "dark" ? 24 : 0 }}
+          transition={{ type: "spring", stiffness: 500, damping: 30 }}
+        >
+          {theme === "dark" ? <Moon className="w-3.5 h-3.5" /> : <Sun className="w-3.5 h-3.5" />}
+        </motion.div>
+      </button>
+
       {/* Left: animated illustration */}
       <div className="relative md:flex-1 hidden md:flex items-center justify-center bg-gradient-to-br from-primary-highlight via-surface to-surface-offset overflow-hidden">
         {[Heart, Stethoscope, Pill, FlaskConical, Activity].map((Icon, i) => (
@@ -61,36 +94,56 @@ function LoginPage() {
         >
           <h2 className="font-display font-extrabold text-2xl mb-2">Welcome back</h2>
           <p className="text-sm text-muted-foreground mb-6">
-            Demo mode — pick a role to sign in instantly.
+            Sign in to access your dashboard.
           </p>
 
-          <div className="space-y-3 mb-6">
+          <form onSubmit={handleLogin} className="space-y-4">
             <div>
-              <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Email</label>
-              <input defaultValue="demo@medcore.io" className="mt-1 w-full px-4 py-3 rounded-2xl bg-surface-offset border border-transparent focus:border-primary focus:bg-surface outline-none text-sm" />
+              <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Username / Email</label>
+              <input 
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+                required
+                className="mt-1 w-full px-4 py-3 rounded-2xl bg-surface-offset border border-transparent focus:border-primary focus:bg-surface outline-none text-sm" 
+              />
             </div>
             <div>
               <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Password</label>
-              <input type="password" defaultValue="demo1234" className="mt-1 w-full px-4 py-3 rounded-2xl bg-surface-offset border border-transparent focus:border-primary focus:bg-surface outline-none text-sm" />
+              <input 
+                type="password" 
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+                className="mt-1 w-full px-4 py-3 rounded-2xl bg-surface-offset border border-transparent focus:border-primary focus:bg-surface outline-none text-sm" 
+              />
             </div>
-          </div>
 
-          <div className="mb-3">
-            <div className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2">Sign in as</div>
-            <div className="grid grid-cols-2 gap-2 max-h-72 overflow-y-auto pr-1">
-              {roleOptions.map((r) => (
-                <motion.button
-                  key={r} whileTap={{ scale: 0.96 }}
-                  onClick={() => signIn(r)}
-                  className="text-xs font-medium px-3 py-2.5 rounded-2xl bg-surface-offset hover:bg-primary hover:text-primary-foreground transition-colors text-left"
+            <motion.button
+              whileTap={{ scale: 0.98 }}
+              disabled={loading}
+              type="submit"
+              className="w-full mt-4 bg-primary text-primary-foreground font-semibold py-3 rounded-2xl shadow-lg hover:opacity-90 transition flex items-center justify-center gap-2"
+            >
+              {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : "Sign In"}
+            </motion.button>
+          </form>
+
+          <div className="mt-8 border-t border-divider pt-6">
+            <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-4">Bypass for Demo Mode</p>
+            <div className="grid grid-cols-3 gap-2">
+              {['SUPER_ADMIN', 'HOSPITAL_ADMIN', 'DOCTOR', 'NURSE', 'RECEPTIONIST', 'PATIENT'].map((r) => (
+                <button
+                  key={r}
+                  onClick={() => handleDemoLogin(r)}
+                  className="px-2 py-2 text-[10px] font-semibold bg-surface border border-divider hover:border-primary rounded-lg transition-colors text-foreground"
                 >
-                  {roleLabel[r]}
-                </motion.button>
+                  {r.replace('_', ' ')}
+                </button>
               ))}
             </div>
           </div>
 
-          <p className="text-[11px] text-muted-foreground text-center mt-4">
+          <p className="text-[11px] text-muted-foreground text-center mt-6">
             Staff accounts are provisioned by your Super Admin. Patients can self-register.
           </p>
         </motion.div>

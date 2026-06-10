@@ -16,7 +16,7 @@ export type Role =
 export interface User {
   id: string;
   name: string;
-  email: string;
+  username: string;
   role: Role;
   hospital?: string;
   avatar?: string;
@@ -24,31 +24,56 @@ export interface User {
 
 interface AuthState {
   user: User | null;
+  token: string | null;
   theme: "light" | "dark";
-  login: (role: Role) => void;
+  login: (username: string, pass: string) => Promise<void>;
+  demoLogin: (role: Role) => void;
   logout: () => void;
   toggleTheme: () => void;
 }
 
-const demoUsers: Record<Role, User> = {
-  SUPER_ADMIN: { id: "u1", name: "Dr. Aanya Mehta", email: "aanya@medcore.io", role: "SUPER_ADMIN" },
-  HOSPITAL_ADMIN: { id: "u2", name: "Rohan Kapoor", email: "rohan@apollo-demo.io", role: "HOSPITAL_ADMIN", hospital: "Apollo Demo" },
-  DOCTOR: { id: "u3", name: "Dr. Vikram Shah", email: "vikram@apollo-demo.io", role: "DOCTOR", hospital: "Apollo Demo" },
-  NURSE: { id: "u4", name: "Priya Sharma", email: "priya@apollo-demo.io", role: "NURSE", hospital: "Apollo Demo" },
-  RECEPTIONIST: { id: "u5", name: "Maya Iyer", email: "maya@apollo-demo.io", role: "RECEPTIONIST", hospital: "Apollo Demo" },
-  LAB_TECHNICIAN: { id: "u6", name: "Arjun Rao", email: "arjun@apollo-demo.io", role: "LAB_TECHNICIAN", hospital: "Apollo Demo" },
-  PHARMACIST: { id: "u7", name: "Neha Verma", email: "neha@apollo-demo.io", role: "PHARMACIST", hospital: "Apollo Demo" },
-  BILLING_EXECUTIVE: { id: "u8", name: "Sanjay Patel", email: "sanjay@apollo-demo.io", role: "BILLING_EXECUTIVE", hospital: "Apollo Demo" },
-  INSURANCE_COORDINATOR: { id: "u9", name: "Kavita Nair", email: "kavita@apollo-demo.io", role: "INSURANCE_COORDINATOR", hospital: "Apollo Demo" },
-  ED_MANAGER: { id: "u10", name: "Dr. Imran Khan", email: "imran@apollo-demo.io", role: "ED_MANAGER", hospital: "Apollo Demo" },
-  PATIENT: { id: "u11", name: "Ananya Reddy", email: "ananya@gmail.com", role: "PATIENT" },
-};
-
 export const useAuth = create<AuthState>((set, get) => ({
   user: null,
+  token: null,
   theme: "light",
-  login: (role) => set({ user: demoUsers[role] }),
-  logout: () => set({ user: null }),
+  login: async (username, pass) => {
+    try {
+      const res = await fetch('http://localhost:3000/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username, password: pass })
+      });
+      if (!res.ok) throw new Error("Login failed");
+      const data = await res.json();
+      const token = data.access_token;
+      const payload = JSON.parse(atob(token.split('.')[1]));
+      
+      set({ 
+        token,
+        user: {
+           id: payload.sub,
+           name: payload.username,
+           username: payload.username,
+           role: payload.role as Role
+        }
+      });
+    } catch (err) {
+      console.error(err);
+      throw err;
+    }
+  },
+  demoLogin: (role) => {
+    set({
+      token: "demo-token",
+      user: {
+        id: "demo-id",
+        name: `Demo ${roleLabel[role] || role}`,
+        username: `demo-${role.toLowerCase()}`,
+        role: role
+      }
+    });
+  },
+  logout: () => set({ user: null, token: null }),
   toggleTheme: () => {
     const next = get().theme === "light" ? "dark" : "light";
     if (typeof document !== "undefined") {
